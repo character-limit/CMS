@@ -5,6 +5,14 @@
 #include "Format.h"
 #include "Status.h"
 
+void printMessages(const StatusReport& report)
+{
+    for (const std::string& message : report.getMessages())
+    {
+        std::cout << "  - " << message << "\n";
+    }
+}
+
 int main()
 {
     std::cout << formatNumber(25.0) << "\n";
@@ -14,20 +22,20 @@ int main()
 
     StatusReport report;
     std::cout << toString(report.getStatus()) << "\n";
-    std::cout << report.getMessage() << "\n";
+    printMessages(report);
     std::cout << report.requiresAttention() << "\n";
 
     report.raise(Status::Unknown, "Not got the reading this time oh");
     std::cout << toString(report.getStatus()) << "\n";
-    std::cout << report.getMessage() << "\n";
+    printMessages(report);
     std::cout << report.requiresAttention() << "\n\n";
     report.raise(Status::MaintenanceRequired, "BAD!");
     std::cout << toString(report.getStatus()) << "\n";
-    std::cout << report.getMessage() << "\n";
+    printMessages(report);
     std::cout << report.requiresAttention() << "\n\n";
-    report.raise(Status::Unknown, "Not got the reading this time oh");
+    report.raise(Status::Unknown, "Not got the reading this time oh2");
     std::cout << toString(report.getStatus()) << "\n";
-    std::cout << report.getMessage() << "\n";
+    printMessages(report);
     std::cout << report.requiresAttention() << "\n\n";
 
 

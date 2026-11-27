@@ -18,12 +18,12 @@ public:
     void raise(Status newStatus, const std::string& message);
 
     [[nodiscard]] Status getStatus() const;
-    [[nodiscard]] const std::string& getMessage() const;
+    [[nodiscard]] const std::vector<std::string>& getMessages() const;
     [[nodiscard]] bool requiresAttention() const;
 
 private:
     Status status_ = Status::Normal;
-    std::string message_;
+    std::vector<std::string> messages_;
 };
 
 

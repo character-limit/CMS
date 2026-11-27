@@ -15,7 +15,7 @@ std::string toString(const Status status)
 
 void StatusReport::raise(const Status newStatus, const std::string& message)
 {
-    message_ = message;
+    messages_.push_back(message);
     if (newStatus > status_)
     {
         status_ = newStatus;
@@ -27,9 +27,9 @@ Status StatusReport::getStatus() const
     return status_;
 }
 
-const std::string& StatusReport::getMessage() const
+const std::vector<std::string>& StatusReport::getMessages() const
 {
-    return message_;
+    return messages_;
 }
 
 bool StatusReport::requiresAttention() const
