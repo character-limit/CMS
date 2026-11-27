@@ -11,4 +11,6 @@ add_executable(CMS main.cpp
         Status.cpp
         Status.h
         EngineComponent.cpp
-        EngineComponent.h)
+        EngineComponent.h
+        LandingGearComponent.cpp
+        LandingGearComponent.h)
