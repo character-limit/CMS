@@ -1,43 +1,42 @@
 #include <iostream>
-
+#include <memory>
 #include <optional>
 #include <string>
 
-#include "Format.h"
+#include "ComponentMonitor.h"
+#include "EngineComponent.h"
+#include "HydraulicPump.h"
+#include "LandingGearComponent.h"
 #include "Status.h"
-
-void printMessages(const StatusReport& report)
+namespace
 {
-    for (const std::string& message : report.getMessages())
-    {
-        std::cout << "  - " << message << "\n";
-    }
+void loadExample(ComponentMonitor& monitor)
+{
+    monitor.add(std::make_unique<EngineComponent>("EN-1", "Left Engine", Hours{1200.0}, 95.0, 60.0)); //normal
+
+    monitor.add(std::make_unique<EngineComponent>("EN-2", "Right Engine", Hours{1850.5}, 160.0, 20.0)); //maintenance req
+
+    monitor.add(std::make_unique<LandingGearComponent>("LG-1", "Main Landing Gear", Hours{2400.0}, 9999, 200.0)); //normal, boundary
+
+    monitor.add(std::make_unique<HydraulicPump>("HY-1", "Hydraulic Pump", Hours{300.0}, 3000.0, std::nullopt)); //unknown
+}
+
 }
 
 int main()
 {
-    std::cout << formatNumber(25.0) << "\n";
-    std::cout << formatNumber(2.5, 2) << "\n";
-    std::cout << formatReading(std::nullopt, "mph") << "\n";
-    std::cout << formatReading(42.0, "mph") << "\n";
+    ComponentMonitor monitor;
+    loadExample(monitor);
 
-    StatusReport report;
-    std::cout << toString(report.getStatus()) << "\n";
-    printMessages(report);
-    std::cout << report.requiresAttention() << "\n";
-
-    report.raise(Status::Unknown, "Not got the reading this time oh");
-    std::cout << toString(report.getStatus()) << "\n";
-    printMessages(report);
-    std::cout << report.requiresAttention() << "\n\n";
-    report.raise(Status::MaintenanceRequired, "BAD!");
-    std::cout << toString(report.getStatus()) << "\n";
-    printMessages(report);
-    std::cout << report.requiresAttention() << "\n\n";
-    report.raise(Status::Unknown, "Not got the reading this time oh2");
-    std::cout << toString(report.getStatus()) << "\n";
-    printMessages(report);
-    std::cout << report.requiresAttention() << "\n\n";
-
-
+    for (const auto& [component, report] : monitor.allReports())
+    {
+        std::cout << component->description() << "\n";
+        std::cout << "  Status: " << toString(report.getStatus()) << "\n";
+        for (const std::string& message : report.getMessages())
+        {
+            std::cout << message << "\n";
+        }
+        std::cout << "\n";
+    }
+    return 0;
 }
