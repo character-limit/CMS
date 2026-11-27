@@ -1,6 +1,6 @@
 #include <string>
 
-#include "status.h"
+#include "Status.h"
 
 std::string toString(const Status status)
 {
@@ -11,4 +11,28 @@ std::string toString(const Status status)
         case Status::MaintenanceRequired: return "Maintainance Required";
     }
     return "Erroneous Status";
+}
+
+void StatusReport::raise(const Status newStatus, const std::string& message)
+{
+    message_ = message;
+    if (newStatus > status_)
+    {
+        status_ = newStatus;
+    }
+}
+
+Status StatusReport::getStatus() const
+{
+    return status_;
+}
+
+const std::string& StatusReport::getMessage() const
+{
+    return message_;
+}
+
+bool StatusReport::requiresAttention() const
+{
+    return status_ != Status::Normal;
 }
