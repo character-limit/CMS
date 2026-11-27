@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Component.h"
+#include <optional>
+#include <string>
 
 class EngineComponent : public Component
 {
