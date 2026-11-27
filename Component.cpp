@@ -7,7 +7,7 @@
 #include <utility>
 
 //constructor
-Component::Component(std::string id, std::string name, Hours hoursSinceService) : id_(std::move(id)), name_(std::move(name)), hoursSinceService_(hoursSinceService)
+Component::Component(std::string id, std::string name, const Hours hoursSinceService) : id_(std::move(id)), name_(std::move(name)), hoursSinceService_(hoursSinceService)
 {
     //validation in constructor, should any fail not created
     validateId(id_);

@@ -9,4 +9,6 @@ add_executable(CMS main.cpp
         Format.cpp
         Format.h
         Status.cpp
-        Status.h)
+        Status.h
+        EngineComponent.cpp
+        EngineComponent.h)
