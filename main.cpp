@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <optional>
+#include <string>
 
 #include "Format.h"
 #include "Status.h"
