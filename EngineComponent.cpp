@@ -80,14 +80,14 @@ void EngineComponent::assessSpecific(StatusReport& report) const
 }
 
 //validation
-void EngineComponent::validateOilTemp(double oilTemp)
+void EngineComponent::validateOilTemp(const double oilTemp)
 {
     if (!std::isfinite(oilTemp) || oilTemp < kMinValidOilTemp || oilTemp > kMaxValidOilTemp)
     {
         throw std::out_of_range("Oil Temperature Must Be a Finite Number Between " + formatNumber(kMinValidOilTemp) + " Degrees Celsius and " + formatNumber(kMaxValidOilTemp) + " Degrees Celsius");
     }
 }
-void EngineComponent::validateOilPressure(double oilPressure)
+void EngineComponent::validateOilPressure(const double oilPressure)
 {
     if (!std::isfinite(oilPressure) || oilPressure < kMinValidOilPressure || oilPressure > kMaxValidOilPressure)
     {

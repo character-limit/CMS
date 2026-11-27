@@ -13,4 +13,6 @@ add_executable(CMS main.cpp
         EngineComponent.cpp
         EngineComponent.h
         LandingGearComponent.cpp
-        LandingGearComponent.h)
+        LandingGearComponent.h
+        HydraulicPump.cpp
+        HydraulicPump.h)
