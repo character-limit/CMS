@@ -4,5 +4,7 @@ project(CMS)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(CMS main.cpp
-        Component.h
-        Component.cpp)
+        Format.cpp
+        Format.h
+        Status.cpp
+        Status.h)
