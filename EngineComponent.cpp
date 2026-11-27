@@ -42,7 +42,7 @@ std::string EngineComponent::typeName() const
 }
 std::string EngineComponent::description() const
 {
-    return Component::description() + "\n Oil Temperature: " + formatReading(oilTemp_, " Degrees Celcius") + "\n Oil Pressure: " + formatReading(oilPressure_, " psi");
+    return Component::description() + "\n Oil Temperature: " + formatReading(oilTemp_, "Degrees Celsius") + "\n Oil Pressure: " + formatReading(oilPressure_, "psi");
 }
 
 Hours EngineComponent::serviceInterval() const
@@ -58,7 +58,7 @@ void EngineComponent::assessSpecific(StatusReport& report) const
     }
     else if (*oilTemp_ > kMaxNormalOilTemp)
     {
-        report.raise(Status::MaintenanceRequired, "Oil Temperature (" + formatNumber(*oilTemp_) + " Degrees Celcius) Exceeds The Maximum Temperature of " + formatNumber(kMaxNormalOilTemp) + " Degrees Celcius");
+        report.raise(Status::MaintenanceRequired, "Oil Temperature (" + formatNumber(*oilTemp_) + " Degrees Celsius) Exceeds The Maximum Temperature of " + formatNumber(kMaxNormalOilTemp) + " Degrees Celsius");
     }
 
     if (!oilPressure_)
@@ -67,11 +67,11 @@ void EngineComponent::assessSpecific(StatusReport& report) const
     }
     else if (*oilPressure_ > kMaxNormalOilPressure)
     {
-        report.raise(Status::MaintenanceRequired, "Oil Pressure (" + formatNumber(*oilPressure_) + "psi) Exceeds The Maximum Pressure of " + formatNumber(kMaxNormalOilPressure) + "psi");
+        report.raise(Status::MaintenanceRequired, "Oil Pressure (" + formatNumber(*oilPressure_) + " psi) Exceeds The Maximum Pressure of " + formatNumber(kMaxNormalOilPressure) + " psi");
     }
     else if (*oilPressure_ < kMinNormalOilPressure)
     {
-        report.raise(Status::MaintenanceRequired, "Oil Pressure (" + formatNumber(*oilPressure_) + "psi) Below The Minimum Pressure of " + formatNumber(kMinNormalOilPressure) + "psi");
+        report.raise(Status::MaintenanceRequired, "Oil Pressure (" + formatNumber(*oilPressure_) + " psi) Below The Minimum Pressure of " + formatNumber(kMinNormalOilPressure) + " psi");
     }
 }
 
@@ -80,13 +80,13 @@ void EngineComponent::validateOilTemp(double oilTemp)
 {
     if (!std::isfinite(oilTemp) || oilTemp < kMinValidOilTemp || oilTemp > kMaxValidOilTemp)
     {
-        throw std::out_of_range("Oil Temperature Must Be a Finite Number Between " + formatNumber(kMinValidOilTemp) + " Degrees Celcius and " + formatNumber(kMaxValidOilTemp) + " Degrees Celcius");
+        throw std::out_of_range("Oil Temperature Must Be a Finite Number Between " + formatNumber(kMinValidOilTemp) + " Degrees Celsius and " + formatNumber(kMaxValidOilTemp) + " Degrees Celsius");
     }
 }
 void EngineComponent::validateOilPressure(double oilPressure)
 {
     if (!std::isfinite(oilPressure) || oilPressure < kMinValidOilPressure || oilPressure > kMaxValidOilPressure)
     {
-        throw std::out_of_range("Oil Pressure Must Be a Finite Number Between " + formatNumber(kMinValidOilPressure) + "psi and " + formatNumber(kMaxValidOilPressure) + "psi");
+        throw std::out_of_range("Oil Pressure Must Be a Finite Number Between " + formatNumber(kMinValidOilPressure) + " psi and " + formatNumber(kMaxValidOilPressure) + " psi");
     }
 }
