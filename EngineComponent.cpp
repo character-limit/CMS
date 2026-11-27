@@ -42,7 +42,7 @@ std::string EngineComponent::typeName() const
 }
 std::string EngineComponent::description() const
 {
-    return Component::description() + "\n Oil Temperature: " + formatReading(oilTemp_, "℃") + "\n Oil Pressure: " + formatReading(oilPressure_, " psi");
+    return Component::description() + "\n Oil Temperature: " + formatReading(oilTemp_, " Degrees Celcius") + "\n Oil Pressure: " + formatReading(oilPressure_, " psi");
 }
 
 Hours EngineComponent::serviceInterval() const
@@ -58,7 +58,7 @@ void EngineComponent::assessSpecific(StatusReport& report) const
     }
     else if (*oilTemp_ > kMaxNormalOilTemp)
     {
-        report.raise(Status::MaintenanceRequired, "Oil Temperature (" + formatNumber(*oilTemp_) + "℃) Exceeds The Maximum Temperature of " + formatNumber(kMaxNormalOilTemp) + "℃");
+        report.raise(Status::MaintenanceRequired, "Oil Temperature (" + formatNumber(*oilTemp_) + " Degrees Celcius) Exceeds The Maximum Temperature of " + formatNumber(kMaxNormalOilTemp) + " Degrees Celcius");
     }
 
     if (!oilPressure_)
@@ -80,7 +80,7 @@ void EngineComponent::validateOilTemp(double oilTemp)
 {
     if (!std::isfinite(oilTemp) || oilTemp < kMinValidOilTemp || oilTemp > kMaxValidOilTemp)
     {
-        throw std::out_of_range("Oil Temperature Must Be a Finite Number Between " + formatNumber(kMinValidOilTemp) + "℃ and " + formatNumber(kMaxValidOilTemp) + "℃");
+        throw std::out_of_range("Oil Temperature Must Be a Finite Number Between " + formatNumber(kMinValidOilTemp) + " Degrees Celcius and " + formatNumber(kMaxValidOilTemp) + " Degrees Celcius");
     }
 }
 void EngineComponent::validateOilPressure(double oilPressure)
