@@ -17,4 +17,8 @@ add_executable(CMS main.cpp
         HydraulicPump.cpp
         HydraulicPump.h
         ComponentMonitor.cpp
-        ComponentMonitor.h)
+        ComponentMonitor.h
+        Parser.cpp
+        Parser.h
+        CommandLineInterface.cpp
+        CommandLineInterface.h)
