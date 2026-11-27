@@ -3,6 +3,13 @@
 #include "Component.h"
 #include "Status.h"
 
+#include "ComponentMonitor.h"
+#include <cstddef>
+#include <memory>
+#include <vector>
+#include <iterator>
+#include <string>
+
 struct ComponentReport
 {
     const Component* component;
@@ -17,7 +24,7 @@ public:
 
     std::vector<ComponentReport> allReports() const;
 
-    Component* find(const std::string& id);
+    Component* find(const std::string& id) const;
 
     std::size_t size() const;
 
