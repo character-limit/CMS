@@ -1,6 +1,7 @@
 #include "CommandLineInterface.h"
 
 #include "EngineComponent.h"
+#include "Format.h"
 #include "HydraulicPump.h"
 #include "LandingGearComponent.h"
 #include "Parser.h"
@@ -48,7 +49,7 @@ void CommandLineInterface::run() const
                 switch (*choice)
                 {
                 case 1: addComponent(); break;
-                case 2: out_ << kInvalidChoice << '\n'; break;
+                case 2: updateReadings(); break;
                 case 3: out_ << kInvalidChoice << '\n'; break;
                 case 4: out_ << kInvalidChoice << '\n'; break;
                 case 5: out_ << kInvalidChoice << '\n'; break;
@@ -300,4 +301,82 @@ std::unique_ptr<Component> CommandLineInterface::createHydraulicPump(const std::
     const std::optional<double> fluidTemp = inputOptionalValidNumber("  Fluid Temperature (Degrees Celcius): ", HydraulicPump::validateFluidTemp);
 
     return std::make_unique<HydraulicPump>(id, name, hours, pressure, fluidTemp);
+}
+
+//NEW COMPONENT NOT FULLY IMPLEMENTED IF OUTPUT LEAD YOU HERE, ADD IT TO THE SELECTOIN BELOW.
+void CommandLineInterface::updateReadings() const
+{
+    Component* component = inputFindComponent();
+    if (component == nullptr)
+    {
+        return;
+    }
+
+    if (auto* engine = dynamic_cast<EngineComponent*>(component))
+    {
+        updateEngineReadings(*engine);
+    }
+    else if (auto* gear = dynamic_cast<LandingGearComponent*>(component))
+    {
+        updateLandingGearReadings(*gear);
+    }
+    else if (auto* pump = dynamic_cast<HydraulicPump*>(component))
+    {
+        updateHydraulicPumpReadings(*pump);
+    }
+    else
+    {
+        out_ << "Readings Cannot Be Updated For Type - NOT IMPLEMENTED A NEW COMPONENT FULL - CONTACT DEV WITH ERROR MESSAGE COMMANDLINEINTERFACE.CPP:LN306 " << component->typeName() << ".\n";
+    }
+}
+
+void CommandLineInterface::updateEngineReadings(EngineComponent& engine) const
+{
+    out_ << "Enter New Readings (Leave Blank To Keep The Current Value)\n";
+
+    const std::optional<double> oilTemp = inputOptionalValidNumber("  Oil Temperature (Degrees Celsius) [Currently " + formatReading(engine.getOilTemp(), "Degrees Celsius") + "]: ", EngineComponent::validateOilTemp);
+    const std::optional<double> oilPressure = inputOptionalValidNumber("  Oil Pressure (psi) [Currently " + formatReading(engine.getOilPressure(), "psi") + "]: ", EngineComponent::validateOilPressure);
+
+    if (oilTemp)
+    {
+        engine.setOilTemp(*oilTemp);
+    }
+    if (oilPressure)
+    {
+        engine.setOilPressure(*oilPressure);
+    }
+
+    out_ << "Readings Successfully Updated.\n";
+}
+void CommandLineInterface::updateLandingGearReadings(LandingGearComponent& gear) const
+{
+    out_ << "Enter New Readings (Leave Blank To Keep The Current Value)\n";
+
+    const std::optional<double> tyrePressure = inputOptionalValidNumber("  Tyre Pressure (psi) [Currently " + formatReading(gear.getTyrePressure(), "psi") + "]: ",LandingGearComponent::validateTyrePressure);
+
+    if (tyrePressure)
+    {
+        gear.setTyrePressure(*tyrePressure);
+    }
+
+    out_ << "Readings Updated. (Cycles Change Only Via Option 6 Or A Service.)\n";
+}
+
+void CommandLineInterface::updateHydraulicPumpReadings(HydraulicPump& pump) const
+{
+    out_ << "Enter New Readings (Leave Blank To Keep The Current Value)\n";
+
+    const std::optional<double> pressure = inputOptionalValidNumber("  Pressure (psi) [Currently " + formatReading(pump.getPressure(), "psi") + "]: ", HydraulicPump::validatePressure);
+    const std::optional<double> fluidTemp = inputOptionalValidNumber("  Fluid Temperature (Degrees Celsius) [Currently " + formatReading(pump.getFluidTemp(), "Degrees Celsius") + "]: ", HydraulicPump::validateFluidTemp);
+
+    if (pressure)
+    {
+        pump.setPressure(*pressure);
+    }
+    if (fluidTemp)
+    {
+        pump.setFluidTemp(*fluidTemp);
+    }
+
+    out_ << "Readings Updated.\n";
 }

@@ -3,6 +3,10 @@
 #include <iosfwd>
 #include "ComponentMonitor.h"
 
+class EngineComponent;
+class LandingGearComponent;
+class HydraulicPump;
+
 class CommandLineInterface
 {
 public:
@@ -13,6 +17,7 @@ private:
     //options
     void showMenu() const;
     void addComponent() const;
+    void updateReadings() const;
     void viewComponent() const;
     void statusReport() const;
 
@@ -27,6 +32,9 @@ private:
     long int inputValidWholeNumber(const std::string& prompt, const std::function<void(long int)>& validate) const;
     Component* inputFindComponent() const;
     std::string readLine(const std::string& text) const;
+    void updateEngineReadings(EngineComponent& engine) const;
+    void updateLandingGearReadings(LandingGearComponent& gear) const;
+    void updateHydraulicPumpReadings(HydraulicPump& pump) const;
 
     //output manage
     void printStatus(const StatusReport& report) const;
