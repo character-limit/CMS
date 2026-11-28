@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <sstream>
 
-//convert to text, 1dp by default, saves repetiton across all outputs
+//convert to text, 1dp by default, saves repetition across all outputs
 
 std::string formatNumber(double value, const int decimalPlaces)
 {

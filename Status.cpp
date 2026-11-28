@@ -8,7 +8,7 @@ std::string toString(const Status status)
     {
         case Status::Normal: return "Normal";
         case Status::Unknown: return "Unknown";
-        case Status::MaintenanceRequired: return "Maintainance Required";
+        case Status::MaintenanceRequired: return "Maintenance Required";
     }
     return "Erroneous Status";
 }

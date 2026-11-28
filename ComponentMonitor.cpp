@@ -23,7 +23,7 @@ void ComponentMonitor::add(std::unique_ptr<Component> component)
 
 bool ComponentMonitor::remove(const std::string& id)
 {
-    const auto position = std::find_if(components_.begin(), components_.end(), [&id](const std::unique_ptr<Component>& component)
+    const auto position = std::ranges::find_if(components_, [&id](const std::unique_ptr<Component>& component)
     {
         return component -> getId() == id;
     });
@@ -33,7 +33,7 @@ bool ComponentMonitor::remove(const std::string& id)
         return false; //not removed as cant find
     }
     components_.erase(position);
-    return true; //succes
+    return true; //success
 }
 
 std::vector<ComponentReport> ComponentMonitor::allReports() const

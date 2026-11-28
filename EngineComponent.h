@@ -15,7 +15,7 @@ public:
     static constexpr double kMinValidOilPressure = 0.0;
     static constexpr double kMaxValidOilPressure = 160.0;
 
-    static constexpr double kMaxNormalOilTemp = 150.0; //range of maintainance alerts
+    static constexpr double kMaxNormalOilTemp = 150.0; //range of maintenance alerts
     static constexpr double kMinNormalOilPressure = 25.0;
     static constexpr double kMaxNormalOilPressure = 100.0;
 

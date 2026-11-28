@@ -97,7 +97,7 @@ void CommandLineInterface::statusReport() const
         out_ << '\n';
     }
 
-   //seperate of attention required
+   //separate of attention required
     out_ << "\n--- Requires Attention ---\n";
     bool anyListed = false;
     for (const Status severity : {Status::MaintenanceRequired, Status::Unknown})
@@ -274,11 +274,11 @@ void CommandLineInterface::addComponent() const
     out_ << addedType << " - " << id << " Added.\n";
 }
 
-//type specific createobject
+//type specific create object
 std::unique_ptr<Component> CommandLineInterface::createEngine(const std::string& id, const std::string& name, Hours hours) const
 {
     out_ << "Enter Readings (Not Yet Recorded May Be Left Blank)\n";
-    const std::optional<double> oilTemp = inputOptionalValidNumber("  Oil Temperature (Degrees Celcius): ", EngineComponent::validateOilTemp);
+    const std::optional<double> oilTemp = inputOptionalValidNumber("  Oil Temperature (Degrees Celsius): ", EngineComponent::validateOilTemp);
     const std::optional<double> oilPressure = inputOptionalValidNumber("  Oil Pressure (psi): ", EngineComponent::validateOilPressure);
 
     return std::make_unique<EngineComponent>(id, name, hours, oilTemp, oilPressure);
@@ -298,12 +298,11 @@ std::unique_ptr<Component> CommandLineInterface::createHydraulicPump(const std::
 {
     out_ << "Readings (leave blank if not yet recorded)\n";
     const std::optional<double> pressure = inputOptionalValidNumber("  Pressure (psi): ", HydraulicPump::validatePressure);
-    const std::optional<double> fluidTemp = inputOptionalValidNumber("  Fluid Temperature (Degrees Celcius): ", HydraulicPump::validateFluidTemp);
+    const std::optional<double> fluidTemp = inputOptionalValidNumber("  Fluid Temperature (Degrees Celsius): ", HydraulicPump::validateFluidTemp);
 
     return std::make_unique<HydraulicPump>(id, name, hours, pressure, fluidTemp);
 }
 
-//NEW COMPONENT NOT FULLY IMPLEMENTED IF OUTPUT LEAD YOU HERE, ADD IT TO THE SELECTOIN BELOW.
 void CommandLineInterface::updateReadings() const
 {
     Component* component = inputFindComponent();
@@ -326,7 +325,7 @@ void CommandLineInterface::updateReadings() const
     }
     else
     {
-        out_ << "Readings Cannot Be Updated For Type - NOT IMPLEMENTED A NEW COMPONENT FULL - CONTACT DEV WITH ERROR MESSAGE COMMANDLINEINTERFACE.CPP:LN306 " << component->typeName() << ".\n";
+        throw std::logic_error("No reading update implemented for type (CommandLineInterface::updateReadings())" + component->typeName());
     }
 }
 
@@ -352,9 +351,7 @@ void CommandLineInterface::updateLandingGearReadings(LandingGearComponent& gear)
 {
     out_ << "Enter New Readings (Leave Blank To Keep The Current Value)\n";
 
-    const std::optional<double> tyrePressure = inputOptionalValidNumber("  Tyre Pressure (psi) [Currently " + formatReading(gear.getTyrePressure(), "psi") + "]: ",LandingGearComponent::validateTyrePressure);
-
-    if (tyrePressure)
+    if (const std::optional<double> tyrePressure = inputOptionalValidNumber("  Tyre Pressure (psi) [Currently " + formatReading(gear.getTyrePressure(), "psi") + "]: ",LandingGearComponent::validateTyrePressure))
     {
         gear.setTyrePressure(*tyrePressure);
     }

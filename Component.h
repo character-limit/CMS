@@ -28,7 +28,7 @@ public:
 
     [[nodiscard]] StatusReport assessStatus() const;
 
-    //allow overwrite for components like landing gear to also reset other attributes like cycle count
+    //allow to overwrite for components like landing gear to also reset other attributes like cycle count
     virtual void recordService();
 
     [[nodiscard]] virtual std::string typeName() const = 0;

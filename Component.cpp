@@ -32,13 +32,13 @@ Hours Component::getHoursSinceService() const
 //setters
 void Component::setName(std::string name)
 {
-    validateName(name); //validate before change, rejected if invlaid
+    validateName(name); //validate before change, rejected if invalid
     name_ = std::move(name);
 }
 
 void Component::logHours(const Hours amount)
 {
-    validateHoursToLog(amount);//validate before change, rejected if invlaid
+    validateHoursToLog(amount);//validate before change, rejected if invalid
     hoursSinceService_ = hoursSinceService_ + amount;
 }
 void Component::recordService() {

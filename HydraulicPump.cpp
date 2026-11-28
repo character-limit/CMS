@@ -46,7 +46,7 @@ std::string HydraulicPump::typeName() const
 }
 std::string HydraulicPump::description() const
 {
-    return Component::description() + "\n Pressure: " + formatReading(pressure_, "psi") + "\n Fluid Temperature: " + formatReading(fluidTemp_, "Degrees Celcius");
+    return Component::description() + "\n Pressure: " + formatReading(pressure_, "psi") + "\n Fluid Temperature: " + formatReading(fluidTemp_, "Degrees Celsius");
 }
 
 Hours HydraulicPump::serviceInterval() const
@@ -71,7 +71,7 @@ void HydraulicPump::assessSpecific(StatusReport& report) const
     }
     else if (*fluidTemp_ > kMaxNormalFluidTemperature)
     {
-        report.raise(Status::MaintenanceRequired, "Fluid Temperature (" + formatNumber(*fluidTemp_) + " Degrees Celcius) Exceeds The Maximum Fluid Temperature of " + formatNumber(kMaxNormalFluidTemperature) + " Degrees Celcius");
+        report.raise(Status::MaintenanceRequired, "Fluid Temperature (" + formatNumber(*fluidTemp_) + " Degrees Celsius) Exceeds The Maximum Fluid Temperature of " + formatNumber(kMaxNormalFluidTemperature) + " Degrees Celsius");
     }
 }
 
@@ -87,6 +87,6 @@ void HydraulicPump::validateFluidTemp(const double fluidTemp)
 {
     if (!std::isfinite(fluidTemp) || fluidTemp < kMinValidFluidTemperature || fluidTemp > kMaxValidFluidTemperature)
     {
-        throw std::out_of_range("Fluid Temperature Must Be a Finite Number Between " + formatNumber(kMinValidFluidTemperature) + " Degrees Celcius and " + formatNumber(kMaxValidFluidTemperature) + " Degrees Celcius");
+        throw std::out_of_range("Fluid Temperature Must Be a Finite Number Between " + formatNumber(kMinValidFluidTemperature) + " Degrees Celsius and " + formatNumber(kMaxValidFluidTemperature) + " Degrees Celsius");
     }
 }
