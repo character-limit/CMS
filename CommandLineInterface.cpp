@@ -50,13 +50,13 @@ void CommandLineInterface::run() const
                 {
                 case 1: addComponent(); break;
                 case 2: updateReadings(); break;
-                case 3: out_ << kInvalidChoice << '\n'; break;
-                case 4: out_ << kInvalidChoice << '\n'; break;
-                case 5: out_ << kInvalidChoice << '\n'; break;
-                case 6: out_ << kInvalidChoice << '\n'; break;
+                case 3: updateName(); break;
+                case 4: logHours(); break;
+                case 5: logService(); break;
+                case 6: recordCycle(); break;
                 case 7: viewComponent(); break;
                 case 8: statusReport(); break;
-                case 9: out_ << kInvalidChoice << '\n'; break;
+                case 9: removeComponent(); break;
                 case 0: running = false; break;
                 default: out_ << kInvalidChoice << '\n'; break;
                 }
@@ -376,4 +376,82 @@ void CommandLineInterface::updateHydraulicPumpReadings(HydraulicPump& pump) cons
     }
 
     out_ << "Readings Updated.\n";
+}
+
+void CommandLineInterface::updateName() const
+{
+    Component* component = inputFindComponent();
+    if (component == nullptr)
+    {
+        return;
+    }
+
+    out_ << "Current Name: " << component->getName() << '\n';
+    const std::string name = inputValidText("New Name: ", Component::validateName);
+    component->setName(name);
+    out_ << "Name Updated.\n";
+}
+
+void CommandLineInterface::logHours() const
+{
+    Component* component = inputFindComponent();
+    if (component == nullptr)
+    {
+        return;
+    }
+
+    out_ << "Current Hours Since Service: " << formatNumber(component->getHoursSinceService().count()) << " Hrs\n";
+    const double amount = inputValidNumber("Hours To Add: ", [](const double input)
+    {
+        Component::validateHoursToLog(Hours{input});
+    });
+    component->logHours(Hours{amount});
+    out_ << "Hours Since Service Is Now " << formatNumber(component->getHoursSinceService().count()) << " Hrs.\n";
+}
+
+void CommandLineInterface::logService() const
+{
+    Component* component = inputFindComponent();
+    if (component == nullptr)
+    {
+        return;
+    }
+
+    component->recordService();
+    out_ << "Service Recorded.\n";
+    out_ << component->description() << '\n';
+    printStatus(component->assessStatus());
+}
+
+void CommandLineInterface::recordCycle() const
+{
+    Component* component = inputFindComponent();
+    if (component == nullptr)
+    {
+        return;
+    }
+
+    auto* gear = dynamic_cast<LandingGearComponent*>(component);
+    if (gear == nullptr)
+    {
+        out_ << component->getId() << " Is Of Type " << component->typeName() << ". Landing Cycles Can Only Be Recorded For Landing Gear Type.\n";
+        return;
+    }
+
+    gear->recordCycle();
+    out_ << "Landing Cycle Recorded. Cycles Since Last Service: " << gear->getCyclesSinceService() << ".\n";
+    printStatus(gear->assessStatus());
+}
+
+void CommandLineInterface::removeComponent() const
+{
+    const std::string id = readLine("Component ID To Remove: ");
+    if (monitor_.remove(id))
+    {
+        out_ << "Component " << id << " Removed.\n";
+    }
+    else
+    {
+        out_ << "No Component Found For ID: " << id << '\n';
+    }
 }

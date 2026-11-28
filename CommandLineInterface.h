@@ -18,6 +18,11 @@ private:
     void showMenu() const;
     void addComponent() const;
     void updateReadings() const;
+    void updateName() const;
+    void logHours() const;
+    void logService() const;
+    void recordCycle() const;
+    void removeComponent() const;
     void viewComponent() const;
     void statusReport() const;
 
