@@ -1,5 +1,8 @@
 #include "CommandLineInterface.h"
 
+#include "EngineComponent.h"
+#include "HydraulicPump.h"
+#include "LandingGearComponent.h"
 #include "Parser.h"
 
 namespace
@@ -44,7 +47,7 @@ void CommandLineInterface::run() const
             {
                 switch (*choice)
                 {
-                case 1: out_ << kInvalidChoice << '\n'; break;
+                case 1: addComponent(); break;
                 case 2: out_ << kInvalidChoice << '\n'; break;
                 case 3: out_ << kInvalidChoice << '\n'; break;
                 case 4: out_ << kInvalidChoice << '\n'; break;
@@ -90,6 +93,7 @@ void CommandLineInterface::statusReport() const
     {
         out_ << component->getId() << " | " << component->typeName() << " | " << component->getName() << '\n';
         printStatus(report);
+        out_ << '\n';
     }
 
    //seperate of attention required
@@ -130,7 +134,7 @@ Component* CommandLineInterface::inputFindComponent() const
     Component* component = monitor_.find(id);
     if (component == nullptr)
     {
-        out_ << "No Component Found For ID: "<< id << "\n";  // R18
+        out_ << "No Component Found For ID: "<< id << '\n';
     }
     return component;
 }
@@ -140,6 +144,160 @@ void CommandLineInterface::printStatus(const StatusReport& report) const
     out_ << "  Status: " << toString(report.getStatus()) << '\n';
     for (const std::string& message : report.getMessages())
     {
-        out_ << "    - " << message << '\n';  // R12
+        out_ << "    - " << message << '\n';
     }
+}
+
+std::string CommandLineInterface::inputValidText(const std::string& prompt, const std::function<void(const std::string&)>& validate) const
+{
+    while (true)
+    {
+        const std::string text = readLine(prompt);
+        try
+        {
+            validate(text);
+            return text;
+        }
+        catch (const std::exception& error)
+        {
+            out_ << "  " << error.what() << ". Try Again.\n";
+        }
+    }
+}
+
+std::optional<double> CommandLineInterface::inputOptionalValidNumber(const std::string& prompt, const std::function<void(double)>& validate) const
+{
+    while (true)
+    {
+        const std::string line = readLine(prompt);
+        if (line.empty())
+        {
+            return std::nullopt;
+        }
+
+        const std::optional<double> value = parseFiniteNumber(line);
+        if (!value)
+        {
+            out_ << "  Enter a Valid Number.\n";
+            continue;
+        }
+        try
+        {
+            validate(*value);
+            return value;
+        }
+        catch (const std::exception& error)
+        {
+            out_ << "  " << error.what() << ". Try Again.\n";
+        }
+    }
+}
+
+double CommandLineInterface::inputValidNumber(const std::string& prompt, const std::function<void(double)>& validate) const
+{
+    while (true)
+    {
+        if (const std::optional<double> value = inputOptionalValidNumber(prompt, validate))
+        {
+            return *value;
+        }
+        out_ << "  Enter a Valid Number.\n";
+    }
+}
+
+long int CommandLineInterface::inputValidWholeNumber(const std::string& prompt, const std::function<void(long int)>& validate) const
+{
+    while (true)
+    {
+        const std::optional<long int> value = parseWholeNumber(readLine(prompt));
+        if (!value)
+        {
+            out_ << "  Enter a Valid Whole Number.\n";
+            continue;
+        }
+        try
+        {
+            validate(*value);
+            return *value;
+        }
+        catch (const std::exception& error)
+        {
+            out_ << "  " << error.what() << ". Try Again.\n";
+        }
+    }
+}
+
+void CommandLineInterface::addComponent() const
+{
+    out_ << "Available Component Types: 1 - Engine, 2 - Landing Gear, 3 - Hydraulic Pump\n";
+
+    const long int type = inputValidWholeNumber("Select Component Type: ", [](const long int input)
+    {
+        if (input < 1 || input > 3)
+        {
+            throw std::out_of_range("Component Type must be 1, 2 or 3");
+        }
+    });
+    const std::string id = inputValidText("ID: ", [this](const std::string& input)
+    {
+        Component::validateId(input);
+        if (monitor_.find(input) != nullptr)
+        {
+            throw std::invalid_argument("Component With ID " + input + " Already Exists");
+        }
+    });
+
+    const std::string name = inputValidText("Name: ", Component::validateName);
+
+    const double hours = inputValidNumber("Hours Since Last Service: ", [](const double input)
+    {
+        Component::validateHoursSinceService(Hours{input});
+    });
+
+    std::unique_ptr<Component> component;
+    if (type == 1)
+    {
+        component = createEngine(id, name, Hours{hours});
+    }
+    else if (type == 2)
+    {
+        component = createLandingGear(id, name, Hours{hours});
+    }
+    else
+    {
+        component = createHydraulicPump(id, name, Hours{hours});
+    }
+
+    const std::string addedType = component->typeName();
+    monitor_.add(std::move(component));
+    out_ << addedType << " - " << id << " Added.\n";
+}
+
+//type specific createobject
+std::unique_ptr<Component> CommandLineInterface::createEngine(const std::string& id, const std::string& name, Hours hours) const
+{
+    out_ << "Enter Readings (Not Yet Recorded May Be Left Blank)\n";
+    const std::optional<double> oilTemp = inputOptionalValidNumber("  Oil Temperature (Degrees Celcius): ", EngineComponent::validateOilTemp);
+    const std::optional<double> oilPressure = inputOptionalValidNumber("  Oil Pressure (psi): ", EngineComponent::validateOilPressure);
+
+    return std::make_unique<EngineComponent>(id, name, hours, oilTemp, oilPressure);
+}
+
+std::unique_ptr<Component> CommandLineInterface::createLandingGear(const std::string& id, const std::string& name, Hours hours) const
+{
+    const long int cycles = inputValidWholeNumber("Enter Landing Cycles Since Last Service (Mandatory): ", LandingGearComponent::validateCycles);
+
+    out_ << "Enter Readings (Not Yet Recorded May Be Left Blank)\n";
+    const std::optional<double> tyrePressure = inputOptionalValidNumber("  Tyre Pressure (psi): ", LandingGearComponent::validateTyrePressure);
+
+    return std::make_unique<LandingGearComponent>(id, name, hours, cycles, tyrePressure);
+}
+
+std::unique_ptr<Component> CommandLineInterface::createHydraulicPump(const std::string& id, const std::string& name, Hours hours) const
+{
+    out_ << "Readings (leave blank if not yet recorded)\n";
+    const std::optional<double> pressure = inputOptionalValidNumber("  Pressure (psi): ", HydraulicPump::validatePressure);
+    const std::optional<double> fluidTemp = inputOptionalValidNumber("  Fluid Temperature (Degrees Celcius): ", HydraulicPump::validateFluidTemp);
+
+    return std::make_unique<HydraulicPump>(id, name, hours, pressure, fluidTemp);
 }

@@ -22,3 +22,7 @@ add_executable(CMS main.cpp
         Parser.h
         CommandLineInterface.cpp
         CommandLineInterface.h)
+
+if (MINGW)
+    target_link_options(CMS PRIVATE -static)
+endif()
